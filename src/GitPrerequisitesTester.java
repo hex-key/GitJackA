@@ -1,4 +1,7 @@
 import java.io.IOException;
+
+import git.Blob;
+import git.Index;
 public class GitPrerequisitesTester{
 
 	public static void main(String[] args) throws IOException{
