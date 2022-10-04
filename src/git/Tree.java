@@ -8,35 +8,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tree {
-	
-	HashMap<String, String> files = new HashMap<String, String>();
 	public String hash;
 	
-	public Tree(ArrayList<String> pairs) {
+	public Tree(ArrayList<String> lines) {
 
 		String content = "";
 		
-		for (String pair : pairs) {
-			
-			int colon = pair.indexOf(':');
-			
-			content += pair.substring(0, colon) + " : " + pair.substring(colon+2) + "something.txt" + "\n";
-			
+		for (String line : lines) {
+			content += (line);
+			content += "\n";
 		}
+		
+		content = content.strip();
+		
+		System.out.println(content);
+		
+		
 		
 		String contentHash = Commit.encrypt(content);
 		this.hash = contentHash;
 		
 		// write new file with sha1 as the name
-		Path np = Paths.get(".\\objects\\" + contentHash);
+		Path np = Paths.get("./objects/" + contentHash);
 		try {
 			Files.writeString(np, content, StandardCharsets.ISO_8859_1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
-	
 }
 
 

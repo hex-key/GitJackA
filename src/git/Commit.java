@@ -1,4 +1,4 @@
-// i copy pasted my own Commit in because i was confused what was going on with the doubly linked list 
+// copy pasted my own Commit in --Iris
 
 package git;
 
@@ -44,14 +44,17 @@ public class Commit {
 		indexReader.close();
 		
 		// read tree file into the ArrayList as well -- for existing Blobs
-		BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
-		while (treeReader.ready()) {
-			String line = treeReader.readLine();
-			if (line.contains(" : ")) {
-				al.add(line);
+		if (prev != null) {
+			al.add("tree : " + prev.tree.hash);
+			BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
+			while (treeReader.ready()) {
+				String line = treeReader.readLine();
+				if (line.contains(" : ")) {
+					al.add(line);
+				}
 			}
+			treeReader.close();
 		}
-		treeReader.close();
 		
 		// create tree
 		this.tree = new Tree(al);
@@ -66,7 +69,10 @@ public class Commit {
 		this.date = getDate();
 		
 		// maintain doubly linked list
-		prev.setChild(this);
+		if (prev != null) {
+			prev.setChild(this);
+		}
+		writeFile();
 	}
 	
 	public void setChild(Commit next) {
@@ -94,7 +100,8 @@ public class Commit {
 	
 	public void writeFile() throws Exception {
 		// make and store hash
-		String content = parent.hash + this.summary + this.date + this.author; 
+		String prevHash = (parent == null ? "" : parent.hash);
+		String content = prevHash + this.summary + this.date + this.author; 
 		String shaHash = encrypt(content);
 		this.hash = shaHash;
 		

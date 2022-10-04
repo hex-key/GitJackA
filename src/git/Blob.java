@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 public class Blob {
 	private String hash;
 	private String name;
@@ -32,13 +33,11 @@ public class Blob {
 	    }	
 	}
 	
-	
 	public String getHash () {
 		return hash;
 	}
 	
-	public static String encryptThisString(String input)
-	{
+	public static String encryptThisString(String input) {
 		try {
 			// getInstance() method is called with algorithm SHA-1
 			MessageDigest md = MessageDigest.getInstance("SHA-1");

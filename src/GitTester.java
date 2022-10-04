@@ -6,11 +6,11 @@ commit:
 - contains pointer to a tree and some other info about the commit
 
 index:
-- index file in objects (???) folder
-- contains an index of all the files that have been changed (
+- index file in root folder
+- contains an index of all the files that have been changed since last commit
 
 tree:
-contains pointer to one (1) previous tree, as well as blobs (which contain the actual files we're controlling) 
+contains pointer to one previous tree, as well as any new blobs
 
 format of tree entry:
 <type: "blob" or "tree"> : <SHA1 filename of blob/tree> <original filename if blob, nothing if tree> 
@@ -31,9 +31,17 @@ public class GitTester {
 		// commit #1
 		git.addBlob("file1.txt");
 		git.addBlob("file2.txt");
-		git.commit("add files 1 and 2", "hexps13", null);
+		Commit c1 = git.commit("add files 1 and 2", "hexps13", null);
 		
 		// commit #2 
+		git.addBlob("file3.txt");
+		Commit c2 = git.commit("add file 3", "hexps13", c1);
 		
+		// commit #3
+		git.addBlob("file4.txt");
+		Commit c3 = git.commit("add file 4", "hexps13", c2);
+		
+		git.addBlob("file5.txt");
+		Commit c4 = git.commit("add file 5", "hexps13", c3);
 	}
 }

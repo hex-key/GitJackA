@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,7 +35,7 @@ public class Index {
 		String hash = b.getHash();// gets the hash
 		
 		Path path = Paths.get("index.txt");//gets the path to the index file
-	    Files.writeString(path, "blob : " + hash + " " + filename, StandardCharsets.ISO_8859_1);//writes an entry in the index file
+	    Files.writeString(path, "blob : " + hash + " " + filename + "\n", StandardCharsets.ISO_8859_1, StandardOpenOption.APPEND);//writes an entry in the index file
 		
 		index.put(filename, hash);//adds the information to the hashmap
 	}
@@ -71,6 +72,5 @@ public class Index {
 	
 	public Commit commit (String changes, String auth, Commit prev) throws Exception {
 		return new Commit(changes, auth, prev);
-		
 	}
 }
