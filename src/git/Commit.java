@@ -32,6 +32,20 @@ public class Commit {
 	
 	public Commit(String changes, String auth, Commit prev) throws Exception {
 		ArrayList<String> al = new ArrayList<String>();
+				
+		// read tree file into the ArrayList as well -- for existing Blobs
+		if (prev != null) {
+			this.parent = prev;
+			al.add("tree : " + prev.tree.hash);
+			BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
+			while (treeReader.ready()) {
+				String line = treeReader.readLine();
+				if (line.contains(" : ") && !line.contains("tree")) {
+					al.add(line);
+				}
+			}
+			treeReader.close();
+		}
 		
 		// read index file into an ArrayList -- for newly added Blobs
 		BufferedReader indexReader = new BufferedReader(new FileReader(new File("index.txt")));
@@ -42,20 +56,6 @@ public class Commit {
 			}
 		}
 		indexReader.close();
-		
-		// read tree file into the ArrayList as well -- for existing Blobs
-		if (prev != null) {
-			this.parent = prev;
-			al.add("tree : " + prev.tree.hash);
-			BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
-			while (treeReader.ready()) {
-				String line = treeReader.readLine();
-				if (line.contains(" : ")) {
-					al.add(line);
-				}
-			}
-			treeReader.close();
-		}
 		
 		// create tree
 		this.tree = new Tree(al);
@@ -108,7 +108,6 @@ public class Commit {
 		
 		// write file
 		PrintWriter pw = new PrintWriter(new FileWriter(new File("objects/" + shaHash)));
-		System.out.println("New commit with hash " + shaHash);
 		pw.println(tree.hash);
 		pw.println(parent == null ? "" : parent.hash);
 		pw.println(child == null ? "" : child.hash);
