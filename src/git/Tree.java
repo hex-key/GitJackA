@@ -13,19 +13,7 @@ public class Tree {
 	public String hash;
 	
 	public Tree(ArrayList<String> pairs) {
-		
-//		for (String pair : pairs) {
-//			
-//			int colon = pair.indexOf(':');
-//			
-//			String key = pair.substring(0, colon);
-//			
-//			String value = pair.substring(colon + 2);
-//			
-//			files.put(key, value);
-//			
-//		}
-		
+
 		String content = "";
 		
 		for (String pair : pairs) {

@@ -3,13 +3,16 @@
 package git;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
@@ -31,26 +34,38 @@ public class Commit {
 		ArrayList<String> al = new ArrayList<String>();
 		
 		// read index file into an ArrayList -- for newly added Blobs
-		BufferedReader indexRreader = new BufferedReader(new FileReader(new File("index.txt")));
-		while (indexRreader.ready()) {
-			String line = indexRreader.readLine();
-			al.add(line);
+		BufferedReader indexReader = new BufferedReader(new FileReader(new File("index.txt")));
+		while (indexReader.ready()) {
+			String line = indexReader.readLine();
+			if (line.contains(" : ")) {
+				al.add(line);
+			}
 		}
-		indexRreader.close();
+		indexReader.close();
 		
-		// read tree file into the arraylist as well -- for existing Blobs
-		BufferedReader treeReader = new BufferedReader(new FileReader(prev.tree.hash));
+		// read tree file into the ArrayList as well -- for existing Blobs
+		BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
 		while (treeReader.ready()) {
 			String line = treeReader.readLine();
-			al.add(line);
+			if (line.contains(" : ")) {
+				al.add(line);
+			}
 		}
-		treeReader.close();		
+		treeReader.close();
 		
-		this.tree = new Tree(al); //TODO
+		// create tree
+		this.tree = new Tree(al);
 		
+		// clear index file (from: https://www.techiedelight.com/delete-content-of-file-in-java/)
+		BufferedWriter bw = Files.newBufferedWriter(Path.of("index.txt"), StandardOpenOption.TRUNCATE_EXISTING);
+		bw.close();
+		
+		// assign other instance variables
 		this.summary = changes;
 		this.author = auth;
 		this.date = getDate();
+		
+		// maintain doubly linked list
 		prev.setChild(this);
 	}
 	
@@ -78,9 +93,12 @@ public class Commit {
 	}
 	
 	public void writeFile() throws Exception {
+		// make and store hash
 		String content = parent.hash + this.summary + this.date + this.author; 
 		String shaHash = encrypt(content);
 		this.hash = shaHash;
+		
+		// write file
 		PrintWriter pw = new PrintWriter(new FileWriter(new File("objects/" + shaHash)));
 		pw.println(tree.hash);
 		pw.println(parent == null ? "" : parent.hash);
