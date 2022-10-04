@@ -27,17 +27,24 @@ public class Commit {
 	
 	public String hash;
 	
-	public Commit(String pt, String changes, String auth, Commit prev) throws Exception {
+	public Commit(String changes, String auth, Commit prev) throws Exception {
 		ArrayList<String> al = new ArrayList<String>();
 		
-		// read index file into 
-		BufferedReader br = new BufferedReader(new FileReader(new File("index.txt")));
-		while (br.ready()) {
-			String line = br.readLine();
-			if (line.split(" : ")[0].equals("blob")) {
-				al.add(line);
-			}
+		// read index file into an ArrayList -- for newly added Blobs
+		BufferedReader indexRreader = new BufferedReader(new FileReader(new File("index.txt")));
+		while (indexRreader.ready()) {
+			String line = indexRreader.readLine();
+			al.add(line);
 		}
+		indexRreader.close();
+		
+		// read tree file into the arraylist as well -- for existing Blobs
+		BufferedReader treeReader = new BufferedReader(new FileReader(prev.tree.hash));
+		while (treeReader.ready()) {
+			String line = treeReader.readLine();
+			al.add(line);
+		}
+		treeReader.close();		
 		
 		this.tree = new Tree(al); //TODO
 		
@@ -71,7 +78,7 @@ public class Commit {
 	}
 	
 	public void writeFile() throws Exception {
-		String content = parent.hash + this.summary + this.date + this.author ; 
+		String content = parent.hash + this.summary + this.date + this.author; 
 		String shaHash = encrypt(content);
 		this.hash = shaHash;
 		PrintWriter pw = new PrintWriter(new FileWriter(new File("objects/" + shaHash)));

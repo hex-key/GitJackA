@@ -56,4 +56,9 @@ public class Index {
 	    	Files.writeString(p, "\n" + key + " : " + index.get(key), StandardCharsets.ISO_8859_1);//writes all of the non deleted entries
 	    }
 	}
+	
+	public Commit commit (String changes, String auth, Commit prev) throws Exception {
+		return new Commit(changes, auth, prev);
+		
+	}
 }
