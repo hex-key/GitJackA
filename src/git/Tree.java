@@ -19,11 +19,7 @@ public class Tree {
 			content += "\n";
 		}
 		
-		content = content.strip();
-		
-		System.out.println(content);
-		
-		
+		content = content.strip();	
 		
 		String contentHash = Commit.encrypt(content);
 		this.hash = contentHash;

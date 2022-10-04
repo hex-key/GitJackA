@@ -45,6 +45,7 @@ public class Commit {
 		
 		// read tree file into the ArrayList as well -- for existing Blobs
 		if (prev != null) {
+			this.parent = prev;
 			al.add("tree : " + prev.tree.hash);
 			BufferedReader treeReader = new BufferedReader(new FileReader(new File("objects/"+prev.tree.hash)));
 			while (treeReader.ready()) {
@@ -107,12 +108,14 @@ public class Commit {
 		
 		// write file
 		PrintWriter pw = new PrintWriter(new FileWriter(new File("objects/" + shaHash)));
+		System.out.println("New commit with hash " + shaHash);
 		pw.println(tree.hash);
 		pw.println(parent == null ? "" : parent.hash);
 		pw.println(child == null ? "" : child.hash);
 		pw.println(author);
 		pw.println(date);
-		pw.println(summary);
+		pw.print(summary);
+		pw.close();
 	}
 	
 }
